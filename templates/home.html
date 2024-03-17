@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <title>Flashcard</title>
+</head>
+<body>
+    {% include 'nav_bar.html' %}
+    {% block content %}
+    {% endblock %}
+    <div class="main">
+        <div class="product-grid">
+            {% for i in l%}
+            <a href="/{{i}}">
+            <div class="theme">
+                <h2>{{i}}</h2>
+                <form method="post" action="{{ url_for('theme', theme=i) }}">
+                    <button class="d" type="submit">Delete</button>
+                </form>
+                <form method="post" action="{{ url_for('practice',theme=i,le=0) }}">
+                    <button class="p" type="submit">Practice</button>
+            </form>
+            </div>
+            </a>
+            {% endfor %}
+            <a href="/new_theme">
+            <div class="theme">
+                <div class="content">
+                    <h2>New theme</h2>
+                </div>
+            </div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
