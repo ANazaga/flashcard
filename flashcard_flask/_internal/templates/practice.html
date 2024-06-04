@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard</title>
+    <link rel="stylesheet" href= "{{ url_for('static',filename='styles/styles.css') }}">
+</head>
+<body>
+    {% include 'nav_bar.html' %}
+    {% block content %}
+    {% endblock %}
+    <div class="main" style="text-align: left;">
+        <div class="info-box">
+            <h1 style="margin: 0px">{{content.theme}}</h1>
+            <h4>Easy cards: {{content.card_numbers[1] | length}} </h4>
+            <h4>Medium cards: {{content.card_numbers[2] | length}} </h4>
+            <h4>Hard cards: {{content.card_numbers[3] | length}} </h4>
+        </div>
+        <form class="level-form" method="post" action="{{url_for('level_choser',theme=content.theme)}}">
+            <input type="radio" id="e" name="level" value="1">
+            <label for="e">Easy</label><br>
+            <input type="radio" id="m" name="level" value="2">
+            <label for="m">Medium</label><br>
+            <input type="radio" id="h" name="level" value="3">
+            <label for="h">Hard</label><br>
+            <input type="radio" id="mix" name="level" value="0">
+            <label for="mix">Mix</label><br>
+            <input type="hidden" name="level" value="0">
+            <button class="pin" type="submit">Apply</button>
+        </form>
+        <div class="practice-main" style="position: relative; width: 350px;margin: auto;">
+            <form method="post" action="{{ url_for('practice_buttons',theme=content.theme,le=content.level) }}" style="display:inline;">
+                <button class="d" name="del" value="del" style="position:absolute;top:0;right:0;z-index: 10;">Delete</button>
+            </form>
+            <div class="flashcard" style="margin: auto;" onclick="toggleFlip(this)">
+                <div class="flashcard-flipper">
+                    <div class="front">
+                        <h2>{{content.card.front}}</h2>
+                        <h3 class="card-level">{{content.card.level}}</h3>
+                    </div>
+                    <div class="back">
+                        <h3 class="card-level">{{content.card.level}}</h3>
+                        {% if content.card.back[:10]=="data:image"%}
+                        <img src="{{content.card.back}}">
+                        {% elif content.card.back[:6]=="https:" %}
+                        <img src="{{content.card.back}}">
+                        {% elif content.card.back %}
+                        <h2>{{content.card.back}}</h2>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="buttons-box">
+                <form style="display:inline;" method="post" action="{{ url_for('practice_buttons',theme=content.theme,le=content.level)}}">
+                    <input class="pin" id="in" type="submit" name="inc" value="Increase" style="display:inline;">
+                </form>
+                <form style="display:inline;" method="post" action="{{ url_for('practice_buttons',theme=content.theme,le=content.level)}}">
+                    <input class="pin" id="de" type="submit" name="dec" value="Decrease" style="display:inline;">
+                </form>
+                <form style="display:inline;" method="post" action="{{ url_for('practice_buttons',theme=content.theme,le=content.level)}}">
+                    <input class="pin" id="ne" type="submit" name="next" value="Next" style="display:inline;">
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function toggleFlip(element) {
+        element.classList.toggle('active');
+    }
+</script>
+
+</html>

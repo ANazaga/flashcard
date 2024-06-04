@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <title>Flashcard</title>
+</head>
+<body>
+    {% include 'nav_bar.html' %}
+    {% block content %}
+    {% endblock %}
+    <div class="main">
+        <div class="new_theme">
+            <h1>New theme</h1> 
+            <div>
+                <form method="post" action="{{ url_for('new_theme') }}">
+                <label for="new_theme">Theme:</label><br>
+                <input type="text" id="new_theme" name="new_theme" required maxlength="100"><br>
+                <button type="submit">Add</button><br>
+                <a href="{{url_for('home')}}">
+                <input class="button" type="button" value="Cancel"/>
+                </a>
+            </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

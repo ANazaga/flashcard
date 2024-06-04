@@ -1,0 +1,239 @@
+body {
+    font-family: Arial, sans-serif;
+    display: grid;
+    grid-template-columns: 1fr 6fr;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+
+}
+
+.sidenav {
+    height: 100%;
+    background-color: #333;
+    padding-top: 20px;
+}
+
+.sidenav a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #fff;
+    display: block;
+}
+
+.sidenav a:hover {
+    background-color: #555;
+}
+
+.main{
+    text-align: center;
+    overflow: auto;
+    padding: 20px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-gap: 20px;
+    justify-content: center;
+}
+
+.flashcard {
+    width: 350px;
+    height: 250px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.flashcard:active .flashcard-flipper,
+.flashcard.active .flashcard-flipper {
+    transform: rotateY(180deg);
+}
+
+.flashcard-flipper {
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    width: 350px;
+    height: 250px;
+
+}
+
+.front,
+.back {
+    position: absolute;
+    display: flex;
+    width: 350px;
+    height: 250px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.front {
+    background-color: #3498db;
+}
+
+.back {
+    background-color: #e74c3c;
+    transform: rotateY(180deg);
+}
+.new_card {
+    width: 350px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+h1{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.theme {
+            width: 350px;
+            height: 250px;
+            display: flex;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: transform 0.3s ease-in-out;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+.theme:hover {
+    transform: scale(1.05);
+}
+
+.new_theme{
+    font-size: 20px;
+    width: 400px;
+    height: 250px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin: 10% auto;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.new_card_form{
+    font-size: 20px;
+    width: 500px;
+    height: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0px auto;
+}
+
+button ,.button ,.pin{
+            padding: 5px 10px;
+            font-size: 20px;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+button.d,button.p{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    font-size: 15px;
+    margin: 5px;
+    background-color: #e60000;
+}
+
+button.p{
+    background-color: #007bff;
+    position: absolute;
+    top: 15%;
+    right: 0px;
+
+}
+
+button:hover,.button:hover,#ne:hover{
+            background-color: #0056b3;
+}
+
+button.d:hover{
+   background-color: #b30000; 
+}
+
+img{
+    width: 350px;
+    height: 250px;
+    object-fit: contain;
+}
+label{
+    font-size: 20px;
+}
+textarea{
+    font-size: 20px;
+}
+
+.buttons-box{
+    width: 350px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+#in{
+    background-color: #ff0000;
+}
+#de{
+   background-color: #00e600; 
+}
+
+#in:hover{
+    background-color: #cc0000;
+}
+#de:hover{
+   background-color: #00b300; 
+}
+h3.card-level{
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0px;
+    left:0;
+    background-color: #00e600;
+    border-radius: 50%;
+    margin: 2px;
+}
+
+.level-form{
+    position: absolute;
+    top: 210px;
+}

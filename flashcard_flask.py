@@ -1,106 +1,99 @@
 from flask import Flask
 from flask import render_template,redirect,url_for,request
+import pickle
 import json
 from collections import OrderedDict
 import os
+import webbrowser
+import pyautogui
 app = Flask(__name__)
 
-class Card(object):
-   def __init__(self,theme=None,front=None,back=None,level=1):
-      if theme in themes:
-         self.theme = theme
-      else:
-         themes.append(theme)
-         self.theme = theme
+class Card:
+   def __init__(self,theme,front=None,back=None,level=1):
+      self.theme = theme
       self.front = front
       self.back = back
       self.card_id = (self.theme+self.front).encode().hex()
       self.level = level
       cards.add_card(self)
-      cards.update_json()
-
+      cards.update_collection()
 
 class CardCollection(OrderedDict):
-   def get_values(self):
-      return [[i,v.front,v.back,v.theme,v.level] for i,v in list(self.items())]
-   def get(self):
-      return {i[0]:{"front":i[1],
-               "back":i[2],
-               "theme":i[3],
-               "level":i[4]} for i in self.get_values()}
-   def get_by_theme(self):
-      return {t:[v for i,v in list(self.items()) if v.theme==t] for t in themes}
-   def get_levels(self):
-      l = {}
-      for i,c in list(self.get_by_theme().items()):
-         l[i] = {d:[j for j in c if j.level==d] for d in range(1,4)}
-         l[i][0] = c
-      return l
-
-   def remove_theme(self,theme):
-      for i in [i for i,v in list(self.items()) if v.theme==theme]:
-         self.pop(i)
-         self.update_json()
-   # def change_themes(self,old_theme,new_theme):
-   #    for i,v in list(self.items()):
-   #       if v.theme == old_theme:
-   #          v.theme = new_theme
-
-   def del_card(self,index):
-      self.pop(index)
-      self.update_json()
    def add_card(self,card):
-      if card not in list(cards.values()):
-         self[card.card_id] = card
-      elif card in list(cards.values()):
-         self[card.card_id] = card
-      self.update_json()
+      self[card.theme][card.card_id] = card
+      self.update_collection()
 
-   def update_json(self):
-      with open('json_cards.json',"w") as file:
-         json.dump(self.get(),file)
+   def add_theme(self,theme):
+      self[theme] = OrderedDict()
+      self.update_collection()
+
+   def del_card(self,card):
+      self[card.theme].pop(card.card_id)
+      self.update_collection()
+
+   def del_theme(self,theme):
+      self.pop(theme)
+      self.update_collection()
+
+   def rename_theme(self,theme,new_theme):
+      for card in self[theme]:
+         card.theme = new_theme
+      self[new_theme] = self.pop(theme)
+      self.update_collection()
+
+   def move_card(self,card,new_theme):
+      self[new_theme] = self[card.theme].pop(card.card_id)
+      self.update_collection()
 
 
-themes = []
-cards = CardCollection()
+   def get_levels(self,theme):
+      levels = {}
+      for t,c in list(self.items()):
+         levels[t] = OrderedDict([(0,list(self[t].values())),(1,[]),(2,[]),(3,[])])
+         levels[t][0] = list(self[t].values())
+         for c_id,cc in list(self[t].items()):
+            levels[t].setdefault(cc.level,[]).append(cc)
+      return levels[theme]
 
-with open('json_cards.json','r') as file:
-   json_cards = json.load(file)
-for i in list(json_cards.values()):
-   Card(i['theme'],i['front'],i['back'],i['level'])
-print(cards)
+   def update_collection(self):
+      with open('data_collection.pkl',"wb") as file:
+         pickle.dump(self,file)
 
+
+if os.path.exists('data_collection.pkl'):
+   with open('data_collection.pkl','rb') as file:
+      cards = pickle.load(file)
+else:
+   cards = CardCollection()
+   with open('data_collection.pkl','wb') as file:
+      pickle.dump(cards,file)
 
 @app.route('/')
-def home(l=themes):
-   return render_template('home.html',l=l)
+def home():
+   return render_template('home.html',themes=list(cards.keys()))
 
 @app.route('/new_theme',methods=['GET','POST'])
 def new_theme():
    if request.method == "GET":
       return render_template('new_theme.html')
    elif request.method == 'POST':
-      # global themes
       new_theme = request.form.get('new_theme')
-      if new_theme and new_theme not in themes:
-         themes.append(new_theme)
+      if new_theme and new_theme not in list(cards.keys()):
+         cards.add_theme(new_theme)
       return redirect('/')
 
 @app.route('/<theme>',methods=["GET","POST"])
 def theme(theme):
-   global cards
    if request.method == "GET":
-      return render_template('theme.html',content={"theme":theme,"cards":cards.get_by_theme()[theme]})
+      return render_template('theme.html',content={"theme":theme,"cards":list(cards[theme].values())})
    elif request.method == "POST":
-      global themes
-      themes.remove(theme)
-      cards.remove_theme(theme)
-      return redirect(url_for('home'))
+      cards.del_theme(theme)
+      return redirect('/')
 
 @app.route('/<theme>/<card_id>',methods=["POST"])
 def del_card(theme,card_id):
    if request.method == "POST":
-      cards.del_card(card_id)
+      cards.del_card(cards[theme][card_id])
       return redirect(url_for('theme',theme=theme))
 
 @app.route('/<theme>/new_card',methods=['GET','POST'])
@@ -113,42 +106,39 @@ def new_card(theme):
          Card(theme,new_card.get('front'),new_card.get('back'),int(new_card.get('level','1')))
       return redirect(url_for('theme',theme=theme))
 
-@app.route('/practice/<theme>/<le>',methods=["GET","POST"])
+@app.route('/practice/<theme>/<int:le>',methods=["GET","POST"])
 def practice(theme,le):
-   if cards.get_by_theme()[theme]:
-      if cards.get_levels()[theme][int(le)]:
+   levels = cards.get_levels(theme)
+   if levels:
+      if levels.get(le):
          le=le
       else:
          le=0
       return render_template('practice.html',
          content={"theme":theme,
                   "level":le,
-                  "card":cards.get_levels()[theme][int(le)][0],
-                  "card_numbers":cards.get_levels()[theme]})
+                  "card":levels[le][0],
+                  "card_numbers":levels})
    else:
       return redirect('/')
 
-@app.route('/practice/<theme>/<le>/next',methods=["POST"])
+@app.route('/practice/<theme>/<int:le>/next',methods=["POST"])
 def practice_buttons(theme,le):
+   card = cards.get_levels(theme)[le][0]
    if request.form.get('next'):
-      deleted_card = cards.get_levels()[theme][int(le)][0]
-      cards.del_card(deleted_card.card_id)
+      deleted_card = card
+      cards.del_card(card)
       cards.add_card(deleted_card)
-      return redirect(url_for('practice',theme=theme,le=le))
    elif request.form.get('inc'):
-      ccard = cards.get_levels()[theme][int(le)][0]
-      if ccard.level < 3:
-         ccard.level += 1
-         cards.update_json()
+      if card.level < 3:
+         card.level += 1
+         cards.update_collection()
    elif request.form.get('dec'):
-      ccard = cards.get_levels()[theme][int(le)][0]
-      if ccard.level > 1:
-         ccard.level -= 1
-         cards.update_json()
+      if card.level > 1:
+         card.level -= 1
+         cards.update_collection()
    elif request.form.get('del'):
-      cards.del_card(cards.get_levels()[theme][int(le)][0].card_id)
-      return redirect(url_for('practice',theme=theme,le=le))
-
+      cards.del_card(card)
    return redirect(url_for('practice',theme=theme,le=le))
 
 @app.route('/practice/<theme>',methods=["POST"])
@@ -158,8 +148,11 @@ def level_choser(theme):
 
 @app.route('/shutdown',methods=['GET'])
 def shutdown():
-   process_name = 'python.exe'
+   pyautogui.hotkey('ctrl', 'w')
+   process_name = 'flashcard_flask.exe'
    result = os.system(f"taskkill /f /im {process_name}")
+
+webbrowser.open_new_tab("http://127.0.0.1:5000/")
 
 if __name__ == '__main__':
    app.run()

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard</title>
+    <link rel="stylesheet" href= "{{ url_for('static',filename='styles/styles.css') }}">
+</head>
+<body>
+    {% include 'nav_bar.html' %}
+    {% block content %}
+    {% endblock %}
+    <div class="main">
+        <div class="product-grid">
+            {% for card in content.cards %}
+            <div style="position: relative;">
+                <form method="post" action="{{ url_for('del_card', card_id=card.card_id,theme=card.theme) }}" style="display:inline;">
+                <button class="d" type="submit" style="position:absolute;top:0;right:0;z-index: 10;">Delete</button>
+                </form>
+                <div class="flashcard" onclick="toggleFlip(this)">
+                    <div class="flashcard-flipper">
+                        <div class="front">
+                            <h3 class="card-level">{{card.level}}</h3>
+                            <h2>{{card.front}}</h2>
+                        </div>
+                        <div class="back">
+                            <h3 class="card-level">{{card.level}}</h3>
+                            {% if card.back[:10]=="data:image"%}
+                            <img src="{{card.back}}">
+                            {% elif card.back[:6]=="https:" %}
+                            <img src="{{card.back}}">
+                            {% elif card.back %}
+                            <h2>{{card.back}}</h2>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <a href="{{content.theme}}/new_card">
+            <div class="new_card">
+                <h2>New card</h2>
+            </div>
+            </a>
+        </div>
+    </div>
+</body>
+<script>
+    function toggleFlip(element) {
+        element.classList.toggle('active');
+    }
+</script>
+
+</html>
