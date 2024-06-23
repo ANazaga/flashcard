@@ -12,26 +12,35 @@
     {% endblock %}
     <div class="main">
         <div class="product-grid">
-            {% for i in content.cards %}
+            {% for card in content.cards %}
             <div style="position: relative;">
-                <form method="post" action="{{ url_for('del_card', card_id=i.card_id,theme=i.theme) }}" style="display:inline;">
+                <form method="post" action="{{ url_for('del_card', card_id=card.card_id,theme=card.theme) }}" style="display:inline;">
                 <button class="d" type="submit" style="position:absolute;top:0;right:0;z-index: 10;">Delete</button>
                 </form>
+                <a href="{{ url_for('edit_card',referrer='theme' ,theme=card.theme, card_id=card.card_id) }}">
+                <button class="p" type="submit" style="z-index: 10;">Edit</button>
+                </a>
+                <a href="{{ url_for('card_view', theme=card.theme, card_id=card.card_id) }}">
+                <button class="p" type="submit" style="z-index: 10;top: 30%;">Open</button>
+                </a>
+                <a href="{{ url_for('move_card', old_theme=card.theme, card_id=card.card_id) }}">
+                <button class="p" type="submit" style="z-index: 10;top: 45%">Move</button>
+                </a>
                 <div class="flashcard" onclick="toggleFlip(this)">
                     <div class="flashcard-flipper">
                         <div class="front">
-                            <h3 class="card-level">{{i.level}}</h3>
-                            <h2>{{i.front}}</h2>
+                            <h3 class="card-level">{{card.level}}</h3>
+                            <h2>{{card.front}}</h2>
                         </div>
                         <div class="back">
-                            <h3 class="card-level">{{i.level}}</h3>
-                            {% if i.back[:10]=="data:image"%}
-                            <img src="{{i.back}}">
-                            {% elif i.back[:6]=="https:" %}
-                            <img src="{{i.back}}">
-                            {% elif i.back %}
-                            <h2>{{i.back}}</h2>
-                            {% endif %}
+                        <h3 class="card-level">{{card.level}}</h3>
+                        {% if card.back[:10]=="data:image" %}
+                        <img src="{{card.back}}">
+                        {% elif card.back[:6]=="https:" %}
+                        <img src="{{card.back}}">
+                        {% elif card.back %}
+                        <h2>{{card.back}}</h2>
+                        {% endif %}
                         </div>
                     </div>
                 </div>

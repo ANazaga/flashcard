@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <title>Flashcard</title>
+</head>
+<body>
+    {% include 'nav_bar.html' %}
+    {% block content %}
+    {% endblock %}
+    <div class="main">
+        <div class="product-grid">
+            {% for theme in content.themes %}
+            <form method="post" action="{{ url_for('move_card',old_theme=content.old_theme, card_id=content.card_id) }}" style="display:inline;">
+            	<input type="hidden" name="to_theme" value="{{theme}}">
+                <input class="theme" type="submit" value="{{theme}}" style="font-size: 1.5em; font-weight: bold;">
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

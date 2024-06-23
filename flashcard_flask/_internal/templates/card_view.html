@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <title>Flashcard</title>
+    <style>
+        .back{backface-visibility: visible;}
+        img{width: initial;height: initial;}
+
+    </style>
+</head>
+<body>
+    {% include 'nav_bar.html' %}
+    {% block content %}
+    {% endblock %}
+    <div class="main">
+        <h1>{{card.front}}</h1>
+        <h3 class="card-level" style="left:initial;right:0">{{card.level}}</h3>
+        {% if card.back[:10]=="data:image" %}
+        <img src="{{card.back}}">
+        {% elif card.back[:6]=="https:" %}
+        <img src="{{card.back}}">
+        {% elif card.back %}
+        <h2>{{card.back}}</h2>
+        {% endif %}
+    </div>
+</body>
+</html>

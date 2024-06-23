@@ -33,6 +33,15 @@
             <form method="post" action="{{ url_for('practice_buttons',theme=content.theme,le=content.level) }}" style="display:inline;">
                 <button class="d" name="del" value="del" style="position:absolute;top:0;right:0;z-index: 10;">Delete</button>
             </form>
+            <a href="{{ url_for('edit_card',referrer=content.level, theme=content.card.theme, card_id=content.card.card_id) }}">
+            <button class="p" type="submit" style="z-index: 10;">Edit</button>
+            </a>
+            <a href="{{ url_for('card_view', theme=content.card.theme, card_id=content.card.card_id) }}">
+            <button class="p" type="submit" style="z-index: 10;top: 30%">Open</button>
+            </a>
+            <a href="{{ url_for('move_card', old_theme=content.card.theme, card_id=content.card.card_id) }}">
+            <button class="p" type="submit" style="z-index: 10;top: 45%">Move</button>
+            </a>
             <div class="flashcard" style="margin: auto;" onclick="toggleFlip(this)">
                 <div class="flashcard-flipper">
                     <div class="front">

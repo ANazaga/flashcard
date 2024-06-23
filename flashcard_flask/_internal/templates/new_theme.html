@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href= "{{ url_for('static',filename='styles/styles.css') }}">
     <title>Flashcard</title>
+    <style>
+        input {font-size: 20px;width: 250px;margin: 6px}
+    </style>
 </head>
 <body>
     {% include 'nav_bar.html' %}
@@ -15,12 +18,9 @@
             <h1>New theme</h1> 
             <div>
                 <form method="post" action="{{ url_for('new_theme') }}">
-                <label for="new_theme">Theme:</label><br>
-                <input type="text" id="new_theme" name="new_theme" required maxlength="100"><br>
-                <button type="submit">Add</button><br>
-                <a href="{{url_for('home')}}">
-                <input class="button" type="button" value="Cancel"/>
-                </a>
+                <input type="text" id="new_theme" name="new_theme" required maxlength="100" placeholder="Existing or new theme title"><br>
+                <input type="text" id="changed_theme" name="changed_theme" placeholder="New title for existing theme" maxlength="100"><br>
+                <button type="submit">Submit</button><br>
             </form>
             </div>
         </div>

@@ -12,16 +12,16 @@
     {% endblock %}
     <div class="main">
         <div class="product-grid">
-            {% for i in l%}
-            <a href="/{{i}}">
+            {% for theme in themes %}
+            <a href="/{{theme}}">
             <div class="theme">
-                <h2>{{i}}</h2>
-                <form method="post" action="{{ url_for('theme', theme=i) }}">
+                <h2>{{theme}}</h2>
+                <form method="post" action="{{ url_for('theme', theme=theme) }}">
                     <button class="d" type="submit">Delete</button>
                 </form>
-                <form method="post" action="{{ url_for('practice',theme=i,le=0) }}">
+                <form method="post" action="{{ url_for('practice',theme=theme,le=0) }}">
                     <button class="p" type="submit">Practice</button>
-            </form>
+                </form>
             </div>
             </a>
             {% endfor %}

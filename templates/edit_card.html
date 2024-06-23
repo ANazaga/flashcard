@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href= "{{ url_for('static',filename='styles/styles.css') }}">
+  <title>Clipboard Image Paste</title>
+</head>
+<body>
+    {% include 'nav_bar.html' %}
+    {% block content %}
+    {% endblock %}
+    <div class="main">
+      <div class="new_card_form">
+          <h2>Edit card</h2>
+          <div>
+              <form method="post" action="{{url_for('edit_card',referrer=content.referrer,theme=content.card.theme,card_id=content.card.card_id)}}">
+                  <label for="front">Front:</label><br>
+                  <textarea id="front" name="front" rows="5" cols="30">{{content.card.front}}</textarea><br>
+                  <label for="back">Back:</label><br>
+                  <textarea id="back" name="back" rows="5" cols="30">{{content.card.back}}</textarea>
+                  <br>
+                  {% if content.card.level == 1 %}
+                  <input type="radio" id="1" name="level" value="1" checked="true">
+                  {% else %}
+                  <input type="radio" id="1" name="level" value="1">
+                  {% endif %}
+                  <label for="1">1</label>
+                  {% if content.card.level == 2 %}
+                  <input type="radio" id="2" name="level" value="2" checked="true">
+                  {% else %}
+                  <input type="radio" id="2" name="level" value="2">
+                  {% endif %}
+                  <label for="2">2</label>
+                  {% if content.card.level == 3 %}
+                  <input type="radio" id="3" name="level" value="3" checked="true">
+                  {% else %}
+                  <input type="radio" id="3" name="level" value="3">
+                  {% endif %}
+                  <label for="3">3</label>
+                  <div contenteditable="true" id="imageContainer" style="border: 1px solid #ccc;hight:100%; cursor: text;">
+                  {% if (content.card.back[:10]=="data:image") or (content.card.back[:6]=="https:") %}
+                  <img src="{{content.card.back}}">
+                  {% endif %}
+                  </div>
+                  <button type="submit" onclick="submit_image()">Save chnages</button><br>
+              </form>
+          </div>
+      </div>
+    </div>
+  <script>
+    function submit_image(){
+       document.getElementById('back').value=document.querySelector('div img').src;
+    }
+    document.getElementById('imageContainer').addEventListener('paste', function(event) {
+      var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          var blob = items[i].getAsFile();
+          var reader = new FileReader();
+
+          reader.onload = function(e) {
+            var img = document.createElement('img');
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(blob);
+        }
+      }
+      document.getElementById('imageContainer').appendChild(img);
+    });
+  </script>
+</body>
+</html>
+
